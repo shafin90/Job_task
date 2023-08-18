@@ -27,7 +27,7 @@ const UserForm: React.FC = () => {
       alert('Please fill in all the fields before proceeding.');
     } else {
       localStorage.setItem('userDetails', JSON.stringify(formData));
-      navigate('/second-page'); // Navigate to the second page
+      navigate('/second_page'); // Navigate to the second page
     }
   };
 
