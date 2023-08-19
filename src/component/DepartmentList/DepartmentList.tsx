@@ -9,29 +9,27 @@ import {
 } from '@mui/material';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
-const initialDepartments = [
+interface Department {
+  department: string;
+  sub_departments: string[];
+}
+
+const initialDepartments: Department[] = [
   {
     department: 'customer_service',
-    sub_departments: [
-      'support',
-      'customer_success',
-    ],
+    sub_departments: ['support', 'customer_success'],
   },
   {
     department: 'design',
-    sub_departments: [
-      'graphic_design',
-      'product_design',
-      'web_design',
-    ],
+    sub_departments: ['graphic_design', 'product_design', 'web_design'],
   },
 ];
 
-const DepartmentList = () => {
-  const [open, setOpen] = useState([]);
-  const [selectedDepartments, setSelectedDepartments] = useState([]);
+const DepartmentList: React.FC = () => {
+  const [open, setOpen] = useState<string[]>([]);
+  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
 
-  const handleClick = (dept) => {
+  const handleClick = (dept: string) => {
     if (open.includes(dept)) {
       setOpen(open.filter((d) => d !== dept));
     } else {
@@ -39,27 +37,25 @@ const DepartmentList = () => {
     }
   };
 
-  const handleToggle = (event, dept) => {
-    event.stopPropagation(); // Prevent the click event from propagating to parent elements
-
-    if (selectedDepartments.includes(dept)) {
-      setSelectedDepartments(selectedDepartments.filter((d) => d !== dept));
-    } else {
-      setSelectedDepartments([...selectedDepartments, dept]);
-    }
-  };
-
-  const handleSubDeptToggle = (event, subDept, department) => {
+  const handleSubDeptToggle = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    subDept: string,
+    department: string
+  ) => {
     event.stopPropagation();
 
-    const departmentInfo = initialDepartments.find((dept) => dept.department === department);
-    const subDepts = departmentInfo.sub_departments;
+    const departmentInfo = initialDepartments.find(
+      (dept) => dept.department === department
+    );
+    const subDepts = departmentInfo?.sub_departments || [];
 
     if (selectedDepartments.includes(subDept)) {
       setSelectedDepartments(selectedDepartments.filter((d) => d !== subDept));
 
       if (subDepts.every((sub) => !selectedDepartments.includes(sub))) {
-        setSelectedDepartments(selectedDepartments.filter((d) => d !== department));
+        setSelectedDepartments(
+          selectedDepartments.filter((d) => d !== department)
+        );
       }
     } else {
       setSelectedDepartments([...selectedDepartments, subDept]);
@@ -70,7 +66,10 @@ const DepartmentList = () => {
     }
   };
 
-  const handleSelectAllSubDepartments = (event, department) => {
+  const handleSelectAllSubDepartments = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    department: string
+  ) => {
     event.stopPropagation();
 
     const selectedSubDepartments = initialDepartments
@@ -80,7 +79,8 @@ const DepartmentList = () => {
     setSelectedDepartments((prevSelected) => {
       if (prevSelected.includes(department)) {
         return prevSelected.filter(
-          (dept) => dept !== department && !selectedSubDepartments.includes(dept)
+          (dept) =>
+            dept !== department && !selectedSubDepartments.includes(dept)
         );
       } else {
         return [...prevSelected, department, ...selectedSubDepartments];
@@ -99,25 +99,37 @@ const DepartmentList = () => {
                 indeterminate={dept.sub_departments.some((subDept) =>
                   selectedDepartments.includes(subDept)
                 )}
-                onChange={(event) => handleSelectAllSubDepartments(event, dept.department)}
+                onClick={(event) => event.stopPropagation()}
+                onChange={(event) =>
+                  handleSelectAllSubDepartments(event, dept.department)
+                }
               />
             </ListItemIcon>
             <ListItemText primary={dept.department} />
             {open.includes(dept.department) ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
-          <Collapse in={open.includes(dept.department)} timeout="auto" unmountOnExit>
+          <Collapse
+            in={open.includes(dept.department)}
+            timeout="auto"
+            unmountOnExit
+          >
             <List component="div" disablePadding>
               {dept.sub_departments.map((subDept) => (
                 <ListItem
                   key={subDept}
                   button
-                  onClick={(event) => handleSubDeptToggle(event, subDept, dept.department)}
+                  onClick={(event) =>
+                    handleSubDeptToggle(event, subDept, dept.department)
+                  }
                   style={{ paddingLeft: '24px' }}
                 >
                   <ListItemIcon>
                     <Checkbox
                       checked={selectedDepartments.includes(subDept)}
-                      onChange={(event) => handleSubDeptToggle(event, subDept, dept.department)}
+                      onClick={(event) => event.stopPropagation()}
+                      onChange={(event) =>
+                        handleSubDeptToggle(event, subDept, dept.department)
+                      }
                     />
                   </ListItemIcon>
                   <ListItemText primary={subDept} />
