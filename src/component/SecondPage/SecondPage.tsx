@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import ThirdComponent from '../DepartmentList/DepartmentList';
+import DepartmentList from '../DepartmentList/DepartmentList';
 
 // Define columns for the DataGrid
 const columns: GridColDef[] = [
@@ -16,6 +18,11 @@ interface Post {
   body: string;
 }
 
+
+
+
+
+
 const SecondPage = () => {
   const [jsonData, setJsonData] = useState<Post[]>([]);
 
@@ -26,9 +33,16 @@ const SecondPage = () => {
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
+
+
+
+
   return (
     <div style={{ height: 400, width: '100%' }}>
       <DataGrid rows={jsonData} columns={columns} pageSize={5} checkboxSelection />
+
+       {/* DepartmentList component */}
+       <DepartmentList  />
     </div>
   );
 }
